@@ -1,0 +1,26 @@
+Ola, grupo1!
+
+Para acessar o ambiente do hackathon:
+
+1. Peguem a pasta "grupo-template" (tem gerar-conf.sh, docker-compose.yaml
+   e .env.example).
+2. Dentro dela, criem um arquivo chamado ".env" e colem exatamente o
+   bloco abaixo (sem editar nada):
+
+PRIVATE_KEY= Gerada pelo keygen.sh
+ADDRESS= Calculado com base no número do grupo
+SERVER_PUBLIC_KEY= Derivada da chave privada do servidor
+ENDPOINT= IP e porta informados ao executar o script
+ALLOWED_IPS= Valor fixo definido no script
+GRUPO_CONTAINER_IP= IP do container do grupo na VM
+
+3. Rodem (nessa ordem):
+     ./gerar-conf.sh
+     docker compose up -d
+   Isso sobe a VPN dentro de um container -- NAO precisa instalar o
+   WireGuard na maquina de voces, so precisa ter Docker.
+4. Com isso no ar, acessem a aplicacao do grupo em: http://localhost:8080
+   (a aplicacao de voces precisa escutar na porta 8080 dentro do proprio
+   container do grupo -- convencao fixa do hackathon).
+
+Boa sorte no hackathon!

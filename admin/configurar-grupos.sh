@@ -104,11 +104,15 @@ ADDRESS=$VPN_IP/32
 SERVER_PUBLIC_KEY=$SERVER_PUB
 ENDPOINT=$PUBLIC_IP:$WG_PORT
 ALLOWED_IPS=10.13.13.0/24,172.28.10.0/24
+GRUPO_CONTAINER_IP=$CONTAINER_IP
 
-3. Rodem: ./gerar-conf.sh
-4. Importem o arquivo wg0.conf gerado no app do WireGuard e ativem a VPN.
-5. Com a VPN ativa, o ambiente de voces fica em $CONTAINER_IP, na porta
-   que a aplicacao de voces escutar dentro do container.
+3. Rodem (nessa ordem):
+     ./gerar-conf.sh
+     docker compose up -d
+   Isso sobe a VPN dentro de um container
+4. Com isso no ar, acessem a aplicacao do grupo em: http://localhost:8080
+   (lembrando: a aplicacao de voces precisa escutar na porta 8080 dentro
+   do proprio container do grupo -- convencao fixa do hackathon).
 
 Boa sorte no hackathon!
 EMAIL

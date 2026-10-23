@@ -2,8 +2,9 @@
 # gerar-conf.sh
 #
 # Rode isso depois de colar, no arquivo .env (nesta mesma pasta), o bloco
-# que o organizador do hackathon mandou por email. Gera wg0.conf, que e o
-# arquivo que voce importa no app do WireGuard (ou usa com wg-quick).
+# que o organizador do hackathon mandou por email. Gera wg0.conf, usado
+# pelo docker-compose.yaml desta pasta para subir a VPN num container
+# (sem precisar instalar o WireGuard na sua maquina).
 set -euo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -40,4 +41,5 @@ PersistentKeepalive = 25
 EOF
 
 echo "Gerado: $OUT"
-echo "Importe esse arquivo no app do WireGuard, ou rode: wg-quick up $OUT"
+echo "Agora rode: docker compose up -d"
+echo "Depois acesse a aplicacao do grupo em: http://localhost:8080"

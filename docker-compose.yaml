@@ -22,7 +22,7 @@ services:
         ipv4_address: 172.28.10.2
 
   grupo1:
-    image: ubuntu:latest # PREENCHER 
+    image: ubuntu:latest # PREENCHER: imagem/app do grupo
     container_name: grupo1
     restart: unless-stopped
     deploy:

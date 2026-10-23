@@ -1,0 +1,38 @@
+# grupo-template/docker-compose.yaml
+#
+# Sobe a VPN sem precisar instalar o WireGuard na sua maquina -- so precisa
+# de Docker. Depois de rodar `./gerar-conf.sh` (que cria o wg0.conf a
+# partir do seu .env), suba com:
+#
+#   docker compose up -d
+#
+# Com isso no ar, acesse a aplicacao do seu grupo em:
+#
+#   http://localhost:8080
+#
+# (o encaminhamento ja aponta pro container do seu grupo na VM, na porta
+# 8080 -- convencao fixa do hackathon: seu Dockerfile precisa deixar a
+# aplicacao escutando na porta 8080 dentro do container).
+
+services:
+  wireguard:
+    image: lscr.io/linuxserver/wireguard:latest
+    container_name: hackathon-vpn
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./wg0.conf:/config/wg_confs/wg0.conf
+    sysctls:
+      net.ipv4.conf.all.src_valid_mark: "1"
+    ports:
+      - "8080:8080" # unica porta exposta na sua maquina: http://localhost:8080
+
+  proxy:
+    image: alpine/socat
+    container_name: hackathon-vpn-proxy
+    restart: unless-stopped
+    network_mode: "service:wireguard" # usa a rede (e a VPN) do container acima
+    depends_on:
+      - wireguard
+    command: ["TCP-LISTEN:8080,fork,reuseaddr", "TCP:${GRUPO_CONTAINER_IP}:8080"]
