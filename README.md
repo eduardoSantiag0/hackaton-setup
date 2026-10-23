@@ -23,3 +23,6 @@ Cada grupo executa:
 - Executar `docker compose up -d` (assim não precisa instalar o WireGuard na máquina deles)
 - Acessar a aplicação do grupo em http://localhost:8080 (a app do grupo
   precisa escutar na porta 8080 dentro do container deles, convenção fixa)
+
+Link para template dos pariticpantes: 
+- [https://github.com/eduardoSantiag0/hackaton-participante/](https://github.com/eduardoSantiag0/hackaton-participante)
