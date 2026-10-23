@@ -34,18 +34,18 @@ services:
       hackaton-network:
         ipv4_address: 172.28.10.11
 
-    grupo2:
-        image: ubuntu:latest #TODO PREENCHER
-        container_name: grupo2
-        restart: unless-stopped
-        deploy:
-            resources:
-                limits:
-                    cpus: "1.5" #TODO PREENCHER
-                    memory: "2g" #TODO PREENCHER
-        networks:
-            hackaton-network:
-                ipv4_address: 172.28.10.11
+  grupo2:
+      image: ubuntu:latest #TODO PREENCHER
+      container_name: grupo2
+      restart: unless-stopped
+      deploy:
+          resources:
+              limits:
+                  cpus: "1.5" #TODO PREENCHER
+                  memory: "2g" #TODO PREENCHER
+      networks:
+          hackaton-network:
+              ipv4_address: 172.28.10.12
 
 
 networks:
