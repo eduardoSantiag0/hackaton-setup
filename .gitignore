@@ -1,0 +1,6 @@
+admin/wg0.config
+admin/chaves-privadas/
+admin/emails/
+grupo-template/.env
+grupo-template/wg0.conf
+passo-a-passo.txt

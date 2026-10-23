@@ -1,0 +1,71 @@
+# docker-compose.yaml
+#
+# 1 container WireGuard (unica porta publica da VM) + 1 container por grupo.
+#
+# Para X grupos: duplique o bloco "grupo1" abaixo (grupo2, grupo3, ...),
+# trocando o nome do servico, container_name e ipv4_address. Os containers
+# de grupo NAO publicam porta nenhuma no host: cada grupo e acessado pelo
+# proprio IP dentro da rede, depois de conectar na VPN. "Cada grupo usa uma
+# porta" quer dizer a porta que o APP do grupo escuta dentro do CONTAINER
+# dele (ex: 8080) -- isso nao precisa ser fixado aqui, nem pode colidir
+# entre grupos, porque cada um tem seu proprio container/IP.
+#
+# IMPORTANTE sobre limite de recursos: use "deploy.resources.limits"
+# (nao "reservations"). O "docker compose up" normal (fora do modo swarm)
+# so aplica de fato "limits" como --cpus/--memory do container. Ja
+# "reservations" e so respeitado em modo swarm e seria ignorado aqui --
+# por isso o arquivo antigo com "reservations" nao estava limitando nada.
+#
+# Como calcular os valores de cpus/memory:
+#   1. Veja quanto a VM tem no total: `nproc` (vCPUs) e `free -h` (RAM).
+#   2. Reserve uma fatia para o host + container do wireguard
+#      (ex: 1 vCPU e 1-2 GB).
+#   3. Divida o restante pelo numero de grupos. Use o MESMO valor em
+#      todos os blocos de grupo para manter a divisao igual.
+#
+# Exemplo (VM com 8 vCPU / 16 GB, 4 grupos, 1 vCPU / 2 GB reservado p/ host):
+#   restante = 7 vCPU / 14 GB -> 1.75 vCPU / 3.5 GB por grupo
+
+services:
+  wireguard:
+    image: lscr.io/linuxserver/wireguard:latest
+    container_name: wireguard
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: America/Sao_Paulo
+    volumes:
+      # Config gerada por admin/provisionar-grupos.sh. Quando esse arquivo
+      # existe, a imagem linuxserver usa ele direto e NAO gera peers sozinha.
+      - ./admin/wg0.config:/config/wg_confs/wg0.conf
+    ports:
+      - "51820:51820/udp" # unica porta que precisa estar aberta no firewall da VM
+    sysctls:
+      net.ipv4.ip_forward: "1"
+      net.ipv4.conf.all.src_valid_mark: "1"
+    networks:
+      hackaton-network:
+        ipv4_address: 172.28.10.2
+
+  grupo1:
+    image: ubuntu:latest # PREENCHER 
+    container_name: grupo1
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5" # PREENCHER
+          memory: "2g" # PREENCHER
+    networks:
+      hackaton-network:
+        ipv4_address: 172.28.10.11
+
+networks:
+  hackaton-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.10.0/24
