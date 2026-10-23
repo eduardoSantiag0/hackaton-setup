@@ -11,7 +11,11 @@ services:
       PGID: "1000"
       TZ: America/Sao_Paulo
     volumes:
-      - ./admin/wg0.config:/config/wg_confs/wg0.conf
+      - type: bind
+        source: ./admin/wg0.config
+        target: /config/wg_confs/wg0.conf
+        bind:
+          create_host_path: false
     ports:
       - "51820:51820/udp" # unica porta que precisa estar aberta no firewall da VM
     sysctls:
@@ -22,7 +26,7 @@ services:
         ipv4_address: 172.28.10.2
 
   grupo1:
-    image: ubuntu:latest # PREENCHER: imagem/app do grupo
+    image: ubuntu:24.04 # PREENCHER: imagem/app do grupo
     container_name: grupo1
     restart: unless-stopped
     deploy:
@@ -34,8 +38,9 @@ services:
       hackaton-network:
         ipv4_address: 172.28.10.11
 
+
   grupo2:
-      image: ubuntu:latest #TODO PREENCHER
+      image: ubuntu:24.04 #TODO PREENCHER
       container_name: grupo2
       restart: unless-stopped
       deploy:

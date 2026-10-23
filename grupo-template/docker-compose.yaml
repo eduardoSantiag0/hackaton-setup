@@ -19,20 +19,33 @@ services:
     image: lscr.io/linuxserver/wireguard:latest
     container_name: hackathon-vpn
     restart: unless-stopped
+
     cap_add:
       - NET_ADMIN
+
     volumes:
-      - ./wg0.conf:/config/wg_confs/wg0.conf
+      - type: bind
+        source: ./wg0.conf
+        target: /config/wg_confs/wg0.conf
+        bind:
+          create_host_path: false
+
     sysctls:
       net.ipv4.conf.all.src_valid_mark: "1"
+
     ports:
-      - "8080:8080" # unica porta exposta na sua maquina: http://localhost:8080
+      - "127.0.0.1:8080:8080"
 
   proxy:
     image: alpine/socat
     container_name: hackathon-vpn-proxy
     restart: unless-stopped
-    network_mode: "service:wireguard" # usa a rede (e a VPN) do container acima
+
+    network_mode: "service:wireguard"
+
     depends_on:
       - wireguard
-    command: ["TCP-LISTEN:8080,fork,reuseaddr", "TCP:${GRUPO_CONTAINER_IP}:8080"]
+
+    command:
+      - "TCP-LISTEN:8080,fork,reuseaddr"
+      - "TCP:${GRUPO_CONTAINER_IP:?Configure GRUPO_CONTAINER_IP}:8080"
