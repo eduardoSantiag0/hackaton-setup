@@ -26,3 +26,55 @@ Cada grupo executa:
 
 Link para template dos pariticpantes: 
 - [https://github.com/eduardoSantiag0/hackaton-participante/](https://github.com/eduardoSantiag0/hackaton-participante)
+
+
+### Arquitetura da infraestrutura
+
+**Template dos participantes:**
+[hackaton-participante](https://github.com/eduardoSantiag0/hackaton-participante/)
+
+```mermaid
+flowchart TB
+    subgraph PARTICIPANTES["Computadores dos participantes"]
+        direction LR
+
+        subgraph G1["Equipe 1 - Docker Compose"]
+            B1["localhost:8080"] --> S1["Proxy socat"]
+            S1 --> W1["Cliente WireGuard"]
+        end
+
+        subgraph G2["Equipe 2 - Docker Compose"]
+            B2["localhost:8080"] --> S2["Proxy socat"]
+            S2 --> W2["Cliente WireGuard"]
+        end
+    end
+
+    INTERNET(("Internet"))
+
+    subgraph VM["VM do Organizador - IP Publico"]
+        WG["Servidor WireGuard - UDP 51820"]
+
+        subgraph DOCKER["Docker Network - 172.28.10.0/24"]
+            APP1["Container Grupo 1 - 172.28.10.11"]
+            APP2["Container Grupo 2 - 172.28.10.12"]
+            APPN["Container Grupo N"]
+        end
+
+        WG --> APP1
+        WG --> APP2
+        WG -.-> APPN
+    end
+
+    W1 <--> INTERNET
+    W2 <--> INTERNET
+    INTERNET <-->|UDP 51820| WG
+
+    classDef vpn fill:#dbeafe,stroke:#2563eb,color:#1e40af
+    classDef container fill:#dcfce7,stroke:#16a34a,color:#166534
+    classDef proxy fill:#fef3c7,stroke:#d97706,color:#92400e
+
+    class W1,W2,WG vpn
+    class APP1,APP2,APPN container
+    class S1,S2 proxy
+```
+
